@@ -2,13 +2,20 @@
 
 namespace WebEdit\Alias;
 
-use Nette;
 use Fuel;
-use WebEdit;
+use Nette;
 
+/**
+ * Class Extension
+ *
+ * @package WebEdit\Alias
+ */
 final class Extension extends Nette\DI\CompilerExtension
 {
 
+	/**
+	 * @var array
+	 */
 	private $defaults = [
 		'prepend' => TRUE,
 		'class' => [],
@@ -84,6 +91,9 @@ final class Extension extends Nette\DI\CompilerExtension
 		}
 	}
 
+	/**
+	 * @param Nette\PhpGenerator\ClassType $class
+	 */
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
 		$config = $this->getConfig($this->defaults);
