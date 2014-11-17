@@ -42,6 +42,48 @@ final class Extension extends Nette\DI\CompilerExtension
 		}
 	}
 
+	public function beforeCompile()
+	{
+		$builder = $this->getContainerBuilder();
+		$config = $this->getConfig($this->defaults);
+		foreach ($builder->getDefinitions() as $name => $definition) {
+			$class = $definition->getClass();
+			$result = FALSE;
+			foreach ($config['class'] as $original => $alias) {
+				if ($result) {
+					break;
+				}
+				if ($class === $original) {
+					$result = $alias;
+				}
+			}
+			foreach ($config['namespace'] as $original => $alias) {
+				if ($result) {
+					break;
+				}
+				if (strpos($class, $original) === 0) {
+					$result = trim(str_replace($original, $alias, $class), '\\');
+				}
+			}
+			foreach ($config['pattern'] as $original => $alias) {
+				if ($result) {
+					break;
+				}
+				$pattern = '#^' . str_replace('\\*', '(.*)', preg_quote($original, '#')) . '$#uD';
+				if ( ! preg_match($pattern, $class, $matches)) {
+					continue;
+				}
+				$replaced = preg_replace($pattern, str_replace('\\', '\\\\', $alias), $class);
+				if (class_exists($replaced)) {
+					$result = $replaced;
+				}
+			}
+			if ($result) {
+				$definition->setClass($class);
+			}
+		}
+	}
+
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
 		$config = $this->getConfig($this->defaults);
