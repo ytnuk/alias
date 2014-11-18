@@ -2,7 +2,6 @@
 
 namespace WebEdit\Alias;
 
-use Fuel;
 use Nette;
 
 /**
@@ -23,72 +22,43 @@ final class Extension extends Nette\DI\CompilerExtension
 		'pattern' => []
 	];
 
+	/**
+	 * @var Manager
+	 */
+	private $manager;
+
 	public function loadConfiguration()
 	{
+		$this->manager = new Manager;
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig($this->defaults);
 		$manager = $builder->addDefinition($this->prefix('manager'))
-			->setClass(Fuel\Alias\Manager::class);
-		foreach ($config['class'] as $original => $alias) {
-			$manager->addSetup('alias', [
-				$original,
-				$alias
-			]);
-		}
+			->setClass(Manager::class);
+		$manager->addSetup('alias', [$config['class']]);
+		$this->manager->alias($config['class']);
 		foreach ($config['namespace'] as $original => $alias) {
 			$manager->addSetup('aliasNamespace', [
 				$original,
 				$alias
 			]);
+			$this->manager->aliasNamespace($original, $alias);
 		}
-		foreach ($config['pattern'] as $original => $alias) {
-			$manager->addSetup('aliasPattern', [
-				$original,
-				$alias
-			]);
-		}
+		$manager->addSetup('aliasPattern', [$config['pattern']]);
+		$this->manager->aliasPattern($config['pattern']);
 	}
 
 	public function beforeCompile()
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig($this->defaults);
+		$resolving = [];
 		foreach ($builder->getDefinitions() as $name => $definition) {
-			$class = $definition->getClass();
-			$result = FALSE;
-			foreach ($config['class'] as $original => $alias) {
-				if ($result) {
-					break;
-				}
-				if ($class === $original) {
-					$result = $alias;
-				}
-			}
-			foreach ($config['namespace'] as $original => $alias) {
-				if ($result) {
-					break;
-				}
-				if (strpos($class, $original) === 0) {
-					$result = trim(str_replace($original, $alias, $class), '\\');
-				}
-			}
-			foreach ($config['pattern'] as $original => $alias) {
-				if ($result) {
-					break;
-				}
-				$pattern = '#^' . str_replace('\\*', '(.*)', preg_quote($original, '#')) . '$#uD';
-				if ( ! preg_match($pattern, $class, $matches)) {
-					continue;
-				}
-				$replaced = preg_replace($pattern, str_replace('\\', '\\\\', $alias), $class);
-				if (class_exists($replaced)) {
-					$result = $replaced;
-				}
-			}
-			if ($result) {
-				$definition->setClass($class);
+			if ($alias = $this->manager->resolve($definition->getClass())) {
+				$resolving[] = $definition->getClass();
+				$definition->setClass($alias, $definition->getFactory() ? $definition->getFactory()->arguments : []);
 			}
 		}
+		$builder->getDefinition($this->prefix('manager'))
+			->addSetup('setResolving', [$resolving]);
 	}
 
 	/**
@@ -99,8 +69,8 @@ final class Extension extends Nette\DI\CompilerExtension
 		$config = $this->getConfig($this->defaults);
 		$initialize = $class->methods['initialize'];
 		$initialize->addBody('$this->getByType(?)->register(?);', [
-			Fuel\Alias\Manager::class,
-			$config['prepend'] ? 'prepend' : 'append'
+			Manager::class,
+			$config['prepend']
 		]);
 	}
 }
