@@ -18,19 +18,19 @@ final class Manager extends Fuel\Alias\Manager
 	{
 		spl_autoload_register([
 			$this,
-			'createAlias'
+			'loader'
 		], TRUE, $prepend);
 
 		return $this;
 	}
 
-	public function createAlias($alias)
+	public function loader($class)
 	{
-		if ($class = $this->resolve($alias)) {
-			class_alias($alias, $class);
+		if ($alias = $this->resolve($class)) {
+			class_alias($class, $alias);
 		}
 
-		return $class;
+		return $alias;
 	}
 
 	public function resolve($alias)

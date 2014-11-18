@@ -19,7 +19,8 @@ final class Extension extends Nette\DI\CompilerExtension
 		'prepend' => TRUE,
 		'class' => [],
 		'namespace' => [],
-		'pattern' => []
+		'pattern' => [],
+		'excluded' => []
 	];
 
 	/**
@@ -29,9 +30,9 @@ final class Extension extends Nette\DI\CompilerExtension
 
 	public function loadConfiguration()
 	{
-		$this->manager = new Manager;
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig($this->defaults);
+		$this->manager = new Manager;
 		$manager = $builder->addDefinition($this->prefix('manager'))
 			->setClass(Manager::class);
 		$manager->addSetup('alias', [$config['class']]);
@@ -50,15 +51,17 @@ final class Extension extends Nette\DI\CompilerExtension
 	public function beforeCompile()
 	{
 		$builder = $this->getContainerBuilder();
-		$resolving = [];
+		$config = $this->getConfig($this->defaults);
+		$excluded = $config['excluded'];
+		$this->manager->setResolving($excluded);
 		foreach ($builder->getDefinitions() as $name => $definition) {
 			if ($alias = $this->manager->resolve($definition->getClass())) {
-				$resolving[] = $definition->getClass();
+				$excluded[] = $definition->getClass();
 				$definition->setClass($alias, $definition->getFactory() ? $definition->getFactory()->arguments : []);
 			}
 		}
 		$builder->getDefinition($this->prefix('manager'))
-			->addSetup('setResolving', [$resolving]);
+			->addSetup('setResolving', [array_unique($excluded)]);
 	}
 
 	/**
