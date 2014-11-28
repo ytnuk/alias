@@ -1,13 +1,13 @@
 <?php
 
-namespace WebEdit\Alias;
+namespace Kutny\Alias;
 
 use Nette;
 
 /**
  * Class Extension
  *
- * @package WebEdit\Alias
+ * @package Kutny\Alias
  */
 final class Extension extends Nette\DI\CompilerExtension
 {

@@ -1,6 +1,6 @@
 <?php
 
-namespace WebEdit\Alias;
+namespace Kutny\Alias;
 
 use Fuel;
 

@@ -1,12 +1,12 @@
 {
-	"name": "webedit/alias",
+	"name": "kutny/alias",
 	"require": {
 		"fuelphp/alias": "dev-master",
 		"nette/di": "dev-master"
 	},
 	"autoload": {
 		"psr-4": {
-			"WebEdit\\": "src/"
+			"Kutny\\": "src/"
 		}
 	}
 }
