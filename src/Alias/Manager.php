@@ -4,9 +4,19 @@ namespace Ytnuk\Alias;
 
 use Fuel;
 
+/**
+ * Class Manager
+ *
+ * @package Ytnuk\Alias
+ */
 final class Manager extends Fuel\Alias\Manager
 {
 
+	/**
+	 * @param array $resolving
+	 *
+	 * @return $this
+	 */
 	public function setResolving(array $resolving)
 	{
 		$this->resolving = $resolving;
@@ -14,6 +24,11 @@ final class Manager extends Fuel\Alias\Manager
 		return $this;
 	}
 
+	/**
+	 * @param bool $prepend
+	 *
+	 * @return $this
+	 */
 	public function register($prepend = TRUE)
 	{
 		spl_autoload_register([
@@ -24,6 +39,11 @@ final class Manager extends Fuel\Alias\Manager
 		return $this;
 	}
 
+	/**
+	 * @param string $class
+	 *
+	 * @return array|bool|false|string
+	 */
 	public function loader($class)
 	{
 		if ($alias = $this->resolve($class)) {
@@ -33,6 +53,11 @@ final class Manager extends Fuel\Alias\Manager
 		return $alias;
 	}
 
+	/**
+	 * @param string $alias
+	 *
+	 * @return array|bool|false|string
+	 */
 	public function resolve($alias)
 	{
 		if (in_array($alias, $this->resolving)) {

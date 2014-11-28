@@ -70,8 +70,8 @@ final class Extension extends Nette\DI\CompilerExtension
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
 		$config = $this->getConfig($this->defaults);
-		$initialize = $class->methods['initialize'];
-		$initialize->addBody('$this->getByType(?)->register(?);', [
+		$methods = $class->getMethods();
+		$methods['initialize']->addBody('$this->getByType(?)->register(?);', [
 			Manager::class,
 			$config['prepend']
 		]);
