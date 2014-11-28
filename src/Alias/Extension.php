@@ -1,13 +1,13 @@
 <?php
 
-namespace Kutny\Alias;
+namespace Ytnuk\Alias;
 
 use Nette;
 
 /**
  * Class Extension
  *
- * @package Kutny\Alias
+ * @package Ytnuk\Alias
  */
 final class Extension extends Nette\DI\CompilerExtension
 {

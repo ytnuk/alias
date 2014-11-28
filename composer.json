@@ -1,12 +1,12 @@
 {
-	"name": "kutny/alias",
+	"name": "ytnuk/alias",
 	"require": {
 		"fuelphp/alias": "dev-master",
 		"nette/di": "dev-master"
 	},
 	"autoload": {
 		"psr-4": {
-			"Kutny\\": "src/"
+			"Ytnuk\\": "src/"
 		}
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Kutny\Alias;
+namespace Ytnuk\Alias;
 
 use Fuel;
 
