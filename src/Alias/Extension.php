@@ -55,9 +55,22 @@ final class Extension extends Nette\DI\CompilerExtension
 		$excluded = $config['excluded'];
 		$this->manager->setResolving($excluded);
 		foreach ($builder->getDefinitions() as $name => $definition) {
-			if ($alias = $this->manager->resolve($definition->getClass())) {
-				$excluded[] = $definition->getClass();
-				$definition->setClass($alias, $definition->getFactory() ? $definition->getFactory()->arguments : []);
+			$class = $definition->getClass();
+			if ($alias = $this->manager->resolve($class)) {
+				$excluded[] = $class;
+				$definition->setClass($alias);
+			}
+			$class = $definition->getFactory() ? $definition->getFactory()
+				->getEntity() : NULL;
+			if ($alias = $this->manager->resolve($class)
+			) {
+				$excluded[] = $class;
+				$definition->setFactory($alias, $definition->getFactory() ? $definition->getFactory()->arguments : []);
+			}
+			$class = $definition->getImplement();
+			if ($alias = $this->manager->resolve($class)) {
+				$excluded[] = $class;
+				$definition->setImplement($alias);
 			}
 		}
 		$builder->getDefinition($this->prefix('manager'))

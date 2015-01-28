@@ -60,7 +60,7 @@ final class Manager extends Fuel\Alias\Manager
 	 */
 	public function resolve($alias)
 	{
-		if (in_array($alias, $this->resolving)) {
+		if (in_array($alias, $this->resolving) || ! $alias) {
 			return FALSE;
 		}
 		$this->resolving[] = $alias;
