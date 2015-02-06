@@ -57,19 +57,19 @@ final class Extension extends Nette\DI\CompilerExtension
 		foreach ($builder->getDefinitions() as $name => $definition) {
 			$class = $definition->getClass();
 			if ($alias = $this->manager->resolve($class)) {
-				$excluded[] = $class;
+				$excluded[$alias] = $class;
 				$definition->setClass($alias);
 			}
 			$class = $definition->getFactory() ? $definition->getFactory()
 				->getEntity() : NULL;
 			if ($alias = $this->manager->resolve($class)
 			) {
-				$excluded[] = $class;
+				$excluded[$alias] = $class;
 				$definition->setFactory($alias, $definition->getFactory() ? $definition->getFactory()->arguments : []);
 			}
 			$class = $definition->getImplement();
 			if ($alias = $this->manager->resolve($class)) {
-				$excluded[] = $class;
+				$excluded[$alias] = $class;
 				$definition->setImplement($alias);
 			}
 		}
