@@ -33,8 +33,7 @@ final class Extension extends Nette\DI\CompilerExtension
 		$builder = $this->getContainerBuilder();
 		$config = $this->getConfig($this->defaults);
 		$this->manager = new Manager;
-		$manager = $builder->addDefinition($this->prefix('manager'))
-			->setClass(Manager::class);
+		$manager = $builder->addDefinition($this->prefix('manager'))->setClass(Manager::class);
 		$manager->addSetup('alias', [$config['class']]);
 		$this->manager->alias($config['class']);
 		foreach ($config['namespace'] as $original => $alias) {
@@ -60,8 +59,7 @@ final class Extension extends Nette\DI\CompilerExtension
 				$excluded[$alias] = $class;
 				$definition->setClass($alias);
 			}
-			$class = $definition->getFactory() ? $definition->getFactory()
-				->getEntity() : NULL;
+			$class = $definition->getFactory() ? $definition->getFactory()->getEntity() : NULL;
 			if ($alias = $this->manager->resolve($class)
 			) {
 				$excluded[$alias] = $class;
@@ -73,8 +71,7 @@ final class Extension extends Nette\DI\CompilerExtension
 				$definition->setImplement($alias);
 			}
 		}
-		$builder->getDefinition($this->prefix('manager'))
-			->addSetup('setResolving', [array_unique($excluded)]);
+		$builder->getDefinition($this->prefix('manager'))->addSetup('setResolving', [array_unique($excluded)]);
 	}
 
 	/**
