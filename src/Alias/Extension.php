@@ -28,6 +28,9 @@ final class Extension extends Nette\DI\CompilerExtension
 	 */
 	private $manager;
 
+	/**
+	 * @inheritdoc
+	 */
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
@@ -47,6 +50,9 @@ final class Extension extends Nette\DI\CompilerExtension
 		$this->manager->aliasPattern($config['pattern']);
 	}
 
+	/**
+	 * @inheritdoc
+	 */
 	public function beforeCompile()
 	{
 		$builder = $this->getContainerBuilder();
@@ -75,7 +81,7 @@ final class Extension extends Nette\DI\CompilerExtension
 	}
 
 	/**
-	 * @param Nette\PhpGenerator\ClassType $class
+	 * @inheritdoc
 	 */
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
