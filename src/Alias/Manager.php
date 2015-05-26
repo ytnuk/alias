@@ -42,7 +42,7 @@ final class Manager extends Fuel\Alias\Manager
 	/**
 	 * @param string $class
 	 *
-	 * @return array|bool|false|string
+	 * @return bool|string
 	 */
 	public function loader($class)
 	{
@@ -56,7 +56,7 @@ final class Manager extends Fuel\Alias\Manager
 	/**
 	 * @param string $alias
 	 *
-	 * @return array|bool|false|string
+	 * @return bool|string
 	 */
 	public function resolve($alias)
 	{
