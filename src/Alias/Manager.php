@@ -1,5 +1,4 @@
 <?php
-
 namespace Ytnuk\Alias;
 
 use Fuel;
@@ -9,7 +8,8 @@ use Fuel;
  *
  * @package Ytnuk\Alias
  */
-final class Manager extends Fuel\Alias\Manager
+final class Manager
+	extends Fuel\Alias\Manager
 {
 
 	/**
@@ -31,26 +31,16 @@ final class Manager extends Fuel\Alias\Manager
 	 */
 	public function register($prepend = TRUE)
 	{
-		spl_autoload_register([
-			$this,
-			'loader'
-		], TRUE, $prepend);
+		spl_autoload_register(
+			[
+				$this,
+				'loader',
+			],
+			TRUE,
+			$prepend
+		);
 
 		return $this;
-	}
-
-	/**
-	 * @param string $class
-	 *
-	 * @return bool|string
-	 */
-	public function loader($class)
-	{
-		if ($alias = $this->resolve($class)) {
-			class_alias($class, $alias);
-		}
-
-		return $alias;
 	}
 
 	/**
@@ -60,7 +50,11 @@ final class Manager extends Fuel\Alias\Manager
 	 */
 	public function resolve($alias)
 	{
-		if (in_array($alias, $this->resolving) || ! $alias) {
+		if (in_array(
+				$alias,
+				$this->resolving
+			) || ! $alias
+		) {
 			return FALSE;
 		}
 		$this->resolving[] = $alias;
@@ -75,9 +69,29 @@ final class Manager extends Fuel\Alias\Manager
 			return FALSE;
 		}
 		if ( ! $this->cache->has($alias)) {
-			$this->cache->set($alias, $class);
+			$this->cache->set(
+				$alias,
+				$class
+			);
 		}
 
 		return $class;
+	}
+
+	/**
+	 * @param string $class
+	 *
+	 * @return bool|string
+	 */
+	public function loader($class)
+	{
+		if ($alias = $this->resolve($class)) {
+			class_alias(
+				$class,
+				$alias
+			);
+		}
+
+		return $alias;
 	}
 }
