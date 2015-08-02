@@ -78,8 +78,7 @@ final class Extension
 		$builder->getDefinition($this->prefix('manager'))->addSetup(
 			'setResolving',
 			[array_unique($excluded)]
-		)
-		;
+		);
 	}
 
 	/**
