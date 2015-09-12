@@ -3,11 +3,6 @@ namespace Ytnuk\Alias;
 
 use Nette;
 
-/**
- * Class Extension
- *
- * @package Ytnuk\Alias
- */
 final class Extension
 	extends Nette\DI\CompilerExtension
 {
@@ -28,9 +23,6 @@ final class Extension
 	 */
 	private $manager;
 
-	/**
-	 * @inheritdoc
-	 */
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
 		$config = $this->getConfig($this->defaults);
@@ -44,9 +36,6 @@ final class Extension
 		);
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	public function beforeCompile()
 	{
 		$builder = $this->getContainerBuilder();
@@ -81,9 +70,6 @@ final class Extension
 		);
 	}
 
-	/**
-	 * @inheritdoc
-	 */
 	public function loadConfiguration()
 	{
 		$builder = $this->getContainerBuilder();
