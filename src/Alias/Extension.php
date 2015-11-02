@@ -23,15 +23,19 @@ final class Extension
 	 */
 	private $manager;
 
+	public function __construct()
+	{
+		$this->manager = new Manager;
+	}
+
 	public function afterCompile(Nette\PhpGenerator\ClassType $class)
 	{
-		$config = $this->getConfig($this->defaults);
 		$methods = $class->getMethods();
 		$methods['initialize']->addBody(
 			'$this->getByType(?)->register(?);',
 			[
 				Manager::class,
-				$config['prepend'],
+				$this->config['prepend'],
 			]
 		);
 	}
@@ -39,9 +43,7 @@ final class Extension
 	public function beforeCompile()
 	{
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig($this->defaults);
-		$excluded = $config['excluded'];
-		$this->manager->setResolving($excluded);
+		$this->manager->setResolving($excluded = $this->config['excluded']);
 		foreach (
 			$builder->getDefinitions() as $name => $definition
 		) {
@@ -72,17 +74,26 @@ final class Extension
 
 	public function loadConfiguration()
 	{
+		$this->validateConfig($this->defaults);
+		$providers = $this->compiler->getExtensions(Provider::class);
+		array_walk(
+			$providers,
+			function (Provider $provider) {
+				$this->config = $this->validateConfig(
+					$this->config,
+					$provider->getAliasResources()
+				);
+			}
+		);
 		$builder = $this->getContainerBuilder();
-		$config = $this->getConfig($this->defaults);
-		$this->manager = new Manager;
 		$manager = $builder->addDefinition($this->prefix('manager'))->setClass(Manager::class);
 		$manager->addSetup(
 			'alias',
-			[$config['class']]
+			[$this->config['class']]
 		);
-		$this->manager->alias($config['class']);
+		$this->manager->alias($this->config['class']);
 		foreach (
-			$config['namespace'] as $original => $alias
+			$this->config['namespace'] as $original => $alias
 		) {
 			$manager->addSetup(
 				'aliasNamespace',
@@ -98,8 +109,8 @@ final class Extension
 		}
 		$manager->addSetup(
 			'aliasPattern',
-			[$config['pattern']]
+			[$this->config['pattern']]
 		);
-		$this->manager->aliasPattern($config['pattern']);
+		$this->manager->aliasPattern($this->config['pattern']);
 	}
 }
